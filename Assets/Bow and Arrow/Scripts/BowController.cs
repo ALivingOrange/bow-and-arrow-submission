@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.XR.Interaction.Toolkit;
+using UnityEngine.XR.Interaction.Toolkit.Interactors;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
 
 public class BowController : MonoBehaviour
@@ -20,9 +21,15 @@ public class BowController : MonoBehaviour
     [Header("Settings")]
     public float fireForceMultiplier = 100f; // Power setting
 
+    [Header("DEBUG")]
+    public float nockTiltX;
+    public float nockTiltY;
+    public float nockTiltZ;
+
     // Private logic variables
     private GameObject currentArrow;
     private Vector3 nockRestLocalPosition;
+    private IXRInteractor nockGrabber;
 
     void Start()
     {
@@ -32,6 +39,7 @@ public class BowController : MonoBehaviour
         // Hook up our custom functions to the VR events
         bowGrabInteractable.selectEntered.AddListener(OnBowGrabbed);
         bowGrabInteractable.selectExited.AddListener(OnBowReleased);
+        nockGrabInteractable.selectEntered.AddListener(OnNockGrabbed);
         nockGrabInteractable.selectExited.AddListener(OnNockReleased);
     }
 
@@ -41,6 +49,19 @@ public class BowController : MonoBehaviour
         lineRenderer.SetPosition(0, stringTop.position);
         lineRenderer.SetPosition(1, stringNock.position);
         lineRenderer.SetPosition(2, stringBottom.position);
+
+        // If nock grabbed rotate based on that, otherwise track rotation
+        if (nockGrabber != null)
+        {
+            bowGrabInteractable.trackRotation = false;
+            Vector3 direction = transform.position - nockGrabber.transform.position;
+            Quaternion lookRotation = Quaternion.LookRotation(direction.normalized, Vector3.up);
+            if (currentArrow != null) currentArrow.transform.rotation = lookRotation * Quaternion.Euler(-10.0f, 0.0f, 0.0f);
+            transform.rotation = lookRotation * Quaternion.Euler(nockTiltX, nockTiltY, nockTiltZ);
+        }
+        else { bowGrabInteractable.trackRotation = true; }
+
+
     }
 
     private void OnBowGrabbed(SelectEnterEventArgs args)
@@ -57,11 +78,17 @@ public class BowController : MonoBehaviour
             currentArrow = null;
         }
     }
+    
+    private void OnNockGrabbed(SelectEnterEventArgs args)
+    {
+        nockGrabber = args.interactorObject;
+    }
 
     private void OnNockReleased(SelectExitEventArgs args)
     {
         // Only fire if an arrow is actually nocked
         if (currentArrow != null) _fire();
+        nockGrabber = null;
     }
 
     private void _fire()

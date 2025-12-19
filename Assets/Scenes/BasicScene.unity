@@ -270,9 +270,9 @@ MonoBehaviour:
   stringBottom: {fileID: 1122872305}
   stringNock: {fileID: 539626182}
   fireForceMultiplier: 100
-  nockTiltX: -115.409
+  nockTiltX: -100
   nockTiltY: -55.49402
-  nockTiltZ: 30
+  nockTiltZ: 60
 --- !u!114 &408477635
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -445,7 +445,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bc13f09e7b9884b45891ad15fc3803b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  disappearAfter: 5
+  disappearAfter: 0.5
 --- !u!1 &6479598209388304956
 GameObject:
   m_ObjectHideFlags: 0

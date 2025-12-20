@@ -16,6 +16,7 @@ public class TargetZone : MonoBehaviour, ITargetManager
 
 
     private List<ITarget> activeTargets = new List<ITarget>();
+    private int score;
 
     void Start()
     {
@@ -65,6 +66,10 @@ public class TargetZone : MonoBehaviour, ITargetManager
     public void TargetDestroyed(int index)
     {
         if (index < 0) return;
+
+        // increment score 
+        score++;
+
         // Swap to-be-destroyed index with furthest index
         int lastIndex = activeTargets.Count - 1;
         activeTargets[index] = activeTargets[lastIndex];
@@ -75,4 +80,6 @@ public class TargetZone : MonoBehaviour, ITargetManager
         activeTargets.RemoveAt(lastIndex);
 
     }
+
+    public int GetScore() { return score; }
 }

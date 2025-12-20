@@ -30,11 +30,14 @@ public class BowController : MonoBehaviour
     private GameObject currentArrow;
     private Vector3 nockRestLocalPosition;
     private IXRInteractor nockGrabber;
+    private AudioSource fireSoundEffect;
 
     void Start()
     {
         lineRenderer.positionCount = 3; // Top, Nock, Bottom
         nockRestLocalPosition = stringNock.localPosition; // Remember where "zero" is
+        TryGetComponent<AudioSource>(out fireSoundEffect);
+
 
         // Hook up our custom functions to the VR events
         bowGrabInteractable.selectEntered.AddListener(OnBowGrabbed);
@@ -100,6 +103,8 @@ public class BowController : MonoBehaviour
         currentArrow.GetComponent<Arrow>().Fire(pullDistance * fireForceMultiplier);
        
         currentArrow = null; // We no longer have an arrow nocked
+
+        if (fireSoundEffect != null) fireSoundEffect.Play();
 
         // Reset the string position and rotation immediately
         stringNock.localPosition = nockRestLocalPosition;

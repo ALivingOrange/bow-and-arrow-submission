@@ -6,6 +6,7 @@ public class Arrow : MonoBehaviour
     public float stabilizationStrength = 7.5f; // How hard the arrow fights to stay straight
     private bool inFlight = false; // A flag to check if we have been fired yet
     private Collider thisCollider;
+    private AudioSource hitSoundEffect;
 
     private void Awake()
     {
@@ -13,6 +14,8 @@ public class Arrow : MonoBehaviour
         // Center of Mass Trick: Real arrows are front-heavy.
         // We shift the balance point forward (Z-axis) to make it fly better.
         rb.centerOfMass = new Vector3(0, 0, 0.5f);
+
+        TryGetComponent<AudioSource>(out hitSoundEffect);
     }
 
     private void Start()
@@ -62,10 +65,14 @@ public class Arrow : MonoBehaviour
 
     void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.TryGetComponent<ITarget>(out ITarget hitTarget)) hitTarget.OnHit(); // Tell target it's been hit
+        if (other.gameObject.TryGetComponent<ITarget>(out ITarget hitTarget))
+        {
+            hitTarget.OnHit();
+            if (hitSoundEffect != null) hitSoundEffect.Play();
+        }
 
-        // freeze in target
-        rb.isKinematic = true;
+            // freeze in target
+            rb.isKinematic = true;
         rb.useGravity = false;
         inFlight = false;
         this.transform.parent = other.transform;

@@ -96,6 +96,8 @@ public class BowController : MonoBehaviour
 
     private void _fire()
     {
+        if (fireSoundEffect != null) fireSoundEffect.Play();
+
         // Calculate power based on pull distance
         float pullDistance = Vector3.Distance(stringNock.localPosition, nockRestLocalPosition);
        
@@ -104,7 +106,6 @@ public class BowController : MonoBehaviour
        
         currentArrow = null; // We no longer have an arrow nocked
 
-        if (fireSoundEffect != null) fireSoundEffect.Play();
 
         // Reset the string position and rotation immediately
         stringNock.localPosition = nockRestLocalPosition;

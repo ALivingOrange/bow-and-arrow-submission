@@ -88,7 +88,7 @@ public class TargetZone : MonoBehaviour, ITargetManager
 
     void EndGame()
     {
-        misses = ClearAllTargets();
+        misses += ClearAllTargets();
         OnGameEnd?.Invoke();
     }
 

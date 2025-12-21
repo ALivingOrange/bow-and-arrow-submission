@@ -3,7 +3,7 @@ using UnityEngine.XR.Interaction.Toolkit;
 using UnityEngine.XR.Interaction.Toolkit.Interactors;
 using UnityEngine.XR.Interaction.Toolkit.Interactables;
 
-public class BowController : MonoBehaviour
+public class BowController : MonoBehaviour, IRangedWeapon
 {
     [Header("Prefabs")]
     public GameObject arrowPrefab; // The arrow we will spawn
@@ -31,6 +31,8 @@ public class BowController : MonoBehaviour
     private Vector3 nockRestLocalPosition;
     private IXRInteractor nockGrabber;
     private AudioSource fireSoundEffect;
+    private bool isCountingShots;
+    private int shotCount;
 
     void Start()
     {
@@ -96,6 +98,7 @@ public class BowController : MonoBehaviour
 
     private void _fire()
     {
+        if (isCountingShots) shotCount++;
         if (fireSoundEffect != null) fireSoundEffect.Play();
 
         // Calculate power based on pull distance
@@ -127,4 +130,18 @@ public class BowController : MonoBehaviour
         currentArrow.transform.localPosition = Vector3.zero;
         currentArrow.transform.localRotation = Quaternion.Euler(90f, 0, 0);
     }
+
+    public void StartShotCount(float time)
+    {
+        isCountingShots = true;
+        shotCount = 0;
+        Invoke("StopShotCount", time);
+    }
+
+    void StopShotCount()
+    {
+        isCountingShots = false;
+    }
+
+    public int GetShotCount() { return shotCount; }
 }

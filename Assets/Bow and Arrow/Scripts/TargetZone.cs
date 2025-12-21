@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System;
 using UnityEngine;
 
 public class TargetZone : MonoBehaviour, ITargetManager
@@ -17,7 +18,10 @@ public class TargetZone : MonoBehaviour, ITargetManager
 
     private List<ITarget> activeTargets = new List<ITarget>();
     private int score;
+    private int misses;
     private bool gameActive = false;
+
+    public event Action OnGameEnd;
 
     void Start()
     {
@@ -38,6 +42,8 @@ public class TargetZone : MonoBehaviour, ITargetManager
             return;
         }
         activeTargets.Clear();
+        misses = 0;
+        score = 0;
         StartCoroutine(TargetSpawnLoop(gameTime));
         Invoke("EndGame", gameTime);
     }
@@ -64,8 +70,8 @@ public class TargetZone : MonoBehaviour, ITargetManager
 
 
             // Spawn position in a dome shape
-            newPosition.x += Random.Range(-5.0f, 5.0f);
-            newPosition.z += Random.Range(-5.0f, 5.0f);
+            newPosition.x += UnityEngine.Random.Range(-5.0f, 5.0f);
+            newPosition.z += UnityEngine.Random.Range(-5.0f, 5.0f);
 
             newPosition.y = UnityEngine.Mathf.Sqrt(50 - UnityEngine.Mathf.Pow(newPosition.x, 2) - UnityEngine.Mathf.Pow(newPosition.z, 2));
 
@@ -78,17 +84,20 @@ public class TargetZone : MonoBehaviour, ITargetManager
 
     void EndGame()
     {
-        score = 0;
-        ClearAllTargets();
+        misses = ClearAllTargets();
+        OnGameEnd?.Invoke();
     }
 
-    void ClearAllTargets()
+    int ClearAllTargets()
     {
+        int erases = 0;
         foreach (ITarget target in activeTargets)
         {
             target.Die();
+            erases++;
         }
         activeTargets.Clear();
+        return erases;
     }
 
     public void TargetDestroyed(int index)
@@ -110,4 +119,5 @@ public class TargetZone : MonoBehaviour, ITargetManager
     }
 
     public int GetScore() { return score; }
+    public int GetMisses() { return misses; }
 }

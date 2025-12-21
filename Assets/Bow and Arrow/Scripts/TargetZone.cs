@@ -18,16 +18,29 @@ public class TargetZone : MonoBehaviour, ITargetManager
 
     private List<ITarget> activeTargets = new List<ITarget>();
     private int score;
+    private bool gameActive = false;
 
     void Start()
     {
-        StartCoroutine(TargetSpawnLoop());
+
     }
 
     // Update is called once per frame
     void Update()
     {
 
+    }
+
+    public void StartGame()
+    {
+        if (gameActive)
+        {
+            Debug.LogError("Tried to start game while already active");
+            return;
+        }
+        activeTargets.Clear();
+        StartCoroutine(TargetSpawnLoop());
+        Invoke("EndGame",  gameTime);
     }
 
     IEnumerator TargetSpawnLoop()
@@ -62,6 +75,21 @@ public class TargetZone : MonoBehaviour, ITargetManager
             target.transform.Rotate(85, 0, 0);
             return target.GetComponent<ITarget>();
         }
+    }
+
+    void EndGame()
+    {
+        score = 0;
+        ClearAllTargets();
+    }
+
+    void ClearAllTargets()
+    {
+        foreach (ITarget target in activeTargets)
+        {
+            target.Die();
+        }
+        activeTargets.Clear();
     }
 
     public void TargetDestroyed(int index)

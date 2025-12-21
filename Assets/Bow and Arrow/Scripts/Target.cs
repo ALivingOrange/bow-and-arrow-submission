@@ -44,7 +44,7 @@ public class Target : MonoBehaviour, ITarget
         Invoke("Die", disappearAfter);
     }
 
-    void Die()
+    public void Die()
     {
         Destroy(gameObject);
     }

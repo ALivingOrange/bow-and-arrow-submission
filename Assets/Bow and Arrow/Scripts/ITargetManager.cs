@@ -4,6 +4,7 @@ using UnityEngine;
 
 public interface ITargetManager
 {
+    void StartGame();
     void TargetDestroyed(int index);
     int GetScore();
 }

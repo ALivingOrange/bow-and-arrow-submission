@@ -1,53 +1,63 @@
-# VR Aimlabs: Unity VR Archery Workshop
+# VR Aimlabs Sumbission: Bow and Arrow
 
-A fully functional VR archery project built in Unity. This project serves as the foundation for a "VR Aimlabs" experience, featuring realistic bow mechanics, physics-based arrow aerodynamics, and a modular target system framework.
+A simple VR archery target-shooter. Targets appear one-after-another, disappearing if too many accumulate without being shot down. Accuracy (hits per shot) and clear rate (how many targets hit in time) are both graded.
 
-## 🏹 Project Overview
-This project was created as part of a VR Lab Workshop to teach core VR mechanics using the **Unity XR Interaction Toolkit**. It implements a complete bow and arrow system where players can test their aim and reaction time.
+## Overview
+This project builds off of a VR Lab Workshop using the **Unity XR Interaction Toolkit**.
 
-**Core Mechanics:**
-* **Realistic Interaction:** Two-handed bow manipulation (holding the grip + pulling the string).
-* **Physics-Based Ballistics:** Arrows fly with gravity and use torque-based stabilization (aerodynamics) to prevent tumbling.
-* **Dynamic String:** Visual string deformation using a Line Renderer that tracks hand movement.
-* **Auto-Reload:** Automatically spawns a new arrow 1 second after firing.
+Here's a list of what's been added from the original Bow and Arrow Reference (at https://github.com/VietDN7/BowAndArrowReference):
 
-## 🛠️ Prerequisites
+### Mechanics
+* A new game is started at the press of a button.
+* Statistics are tracked during the game to show final percentage grades at the end.
+* A UI element at the corner of the screen updates mid-game to show current score.
+* Targets
+   * Spawn in around the origin during a game.
+   * When the maximum number (defined in TargetZone script, default 5) is reached and another spawns, the oldest is pushed out and counted as "missed."
+   * On a hit, the targets turns blue for a moment and vanishes. Arrows stick into targets until they vanish.
+
+### Adjustments
+* While nock is pulled, the bow turns to face away from it.
+* The nocked arrow always looks in the direction of the bow's handle, making aiming easier.
+* Controller visuals are hidden when grabbing the bow.
+
+### Juice
+* Bow twangy sound effect and target-hit ringy sound effect.
+* Dramatic sunset skybox with corresponding directional light.
+
+
+## Prerequisites
 * **Unity Version:** `2022.3.50f1`
 * **Template:** VR Core
 * **Hardware:** Any VR Headset compatible with OpenXR/Unity XR (Meta Quest, HTC Vive, Valve Index).
 
-## 📂 Project Structure
+## Project Structure
 The core logic is contained within `Assets/Bow and Arrow/`:
 
-* **Scripts:**
-    * `BowController.cs`: Manages arrow spawning, string visual updates, and firing power calculations based on pull distance.
-    * `Arrow.cs`: Handles the arrow's flight physics, applying torque to simulate fletchings (drag) so the arrow points forward while flying.
-* **Prefabs:**
-    * `Arrow_Prefab`: A pre-configured arrow with Rigidbody, Capsule Collider, and aerodynamics logic. **Note:** The transform scale is set to 75 to ensure visibility.
+### Scripts:
+* `Arrow.cs`: Arrow flight physics, detecting target hits and informing the target, "burying" into targets, playing the target hit sound.
+* `BowController.cs`: Manages arrow spawning, bow string and arrow visual updates, and firing power calculations based on pull distance. Also plays a sound when fired and counts all shots (for the sake of the accuracy calculation).
+* `ScoreDisplay.cs`: At the end of a game, calculates derived statistics and updates to show the scores of the most recent game.
+* `ScoreUI.cs`: Updates during the game so the player can always see their current score.
+* `Target.cs`: Turns blue and informs target manager when it's hit, destroys itself when necessary. Keeps track of its own index in the manager's list to properly inform the manager.
+* `TargetZone.cs`: Spawns targets at random location during a game, deletes them when the max is reached and at the end of a game, tracks score and missed targets.
 
-## 🚀 Installation & Setup
+#### Interfaces:
+* `IRangedWeapon`: The bow promises to provide the shot count.
+* `ITarget`: The targets promises to let the arrows inform them that they're hit. Also, promises that the manager can track them and tell them to die.
+* `ITargetManager`: The target manager promises to be able to start the game, to be informed that a target's been hit, and to provide the counts of hits and misses.
+
+### Prefabs:
+* `Arrow_Prefab`, `BowNoString`, and `CompletedBow`: Aside from script changes, same as in reference project.
+* `SphereTarget`: A spherical target that can be managed by a target manager.
+    
+
+## Installation & Setup
 1.  Clone this repository.
 2.  Open the project in **Unity 2022.3.50f1**.
-3.  Open the `Basic Scene`.
+3.  Open the `Basic Scene` in `assets/scenes/`.
 4.  Ensure your VR headset is connected and configured.
 5.  Press **Play**.
 
-## 🎮 How to Play
-1.  **Pick up the Bow:** Grab the bow handle with your primary hand.
-2.  **Nock an Arrow:** Move your secondary hand to the bowstring (the "Nock" sphere).
-3.  **Aim & Fire:** Hold the trigger to grab the string, pull back to increase force, and release the trigger to fire.
-4.  **Reload:** A new arrow will appear automatically after a short delay.
-
-## 🎯 Workshop Challenges
-This project is intended to be extended into a full mini-game. Students and developers are encouraged to implement:
-
-* **Target Logic:** Create targets that vanish upon collision and respawn in random locations.
-* **Game Loop:** Add a "Start" button to trigger a 1-minute timer.
-* **Scoring UI:** Implement a 2D Canvas to display hit counts and accuracy.
-* **Juice:** Add sound effects (SFX) and particle systems for successful hits.
-
-## 🔗 Resources
-* [**📄 Step-by-Step Workshop Tutorial**](https://docs.google.com/document/d/1jCDDsRZ0VDbv4e6f51vWnxyKWsstDah1pmluvzWI9m4/edit?usp=sharing)
-* [Unity 2022.3.50f1 Download](https://unity.com/releases/editor/whats-new/2022.3.50f1)
-* [3D Models (Bow & Arrow)](https://drive.google.com/drive/folders/12X2BITKro0X7sDUNT6ifc-ZP8em32jwN?usp=sharing)
-* [Script Reference](https://drive.google.com/drive/folders/1mRnznA46OOmASHUcfz8readkwSFJBVPi?usp=sharing)
+## How to Play
+Pick up the bow, find the scoreboard, and hit `New Game`. Grab the nock, pull back, and shoot the targets.

@@ -2943,7 +2943,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   targetPrefab: {fileID: 5698622913353688704, guid: 22598c0e015b56643aa8e575b0ef97f8, type: 3}
   player: {fileID: 234578799}
-  targetFrequency: 5
+  targetFrequency: 2
   maxTargets: 5
 --- !u!1 &2092139007
 GameObject:

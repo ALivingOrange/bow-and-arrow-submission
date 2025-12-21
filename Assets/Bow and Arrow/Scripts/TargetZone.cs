@@ -52,14 +52,18 @@ public class TargetZone : MonoBehaviour, ITargetManager
     {
         for(int i = (int)(gameTime/targetFrequency); i > 0; i--) // As many runs as fits in the game time
         {
-            if (activeTargets.Count < maxTargets)
-            {
-                ITarget curTarget = SpawnTarget();
+            ITarget curTarget = SpawnTarget();
+            curTarget.SetManager(this.GetComponent<ITargetManager>());
 
-                curTarget.SetIndexInManager(activeTargets.Count);
-                curTarget.SetManager(this.GetComponent<ITargetManager>());
-                activeTargets.Add(curTarget);
+            if (activeTargets.Count == maxTargets) // if targets full, remove earliest (miss)
+            {
+                misses++;
+                activeTargets[0].Die();
+                TargetDestroyed(-1);
             }
+            curTarget.SetIndexInManager(activeTargets.Count);
+            activeTargets.Add(curTarget);
+
             yield return new WaitForSeconds(targetFrequency);
         }
 
@@ -102,20 +106,20 @@ public class TargetZone : MonoBehaviour, ITargetManager
 
     public void TargetDestroyed(int index)
     {
-        if (index < 0) return;
+        if (index < -1 || index >= activeTargets.Count) return;
 
-        // increment score 
-        score++;
+        // index of -1 indicates this is a miss
 
-        // Swap to-be-destroyed index with furthest index
-        int lastIndex = activeTargets.Count - 1;
-        activeTargets[index] = activeTargets[lastIndex];
+        if (index == -1) index = 0;
+        else score++;
 
-        // Let last index know it just got swapped
-        activeTargets[index].SetIndexInManager(index);
+        activeTargets.RemoveAt(index); // RemoveAt shifts further elements back one, like a queue
 
-        activeTargets.RemoveAt(lastIndex);
-
+        // We only need to update stored indices from the index where the removal happened
+        for (int i = index; i < activeTargets.Count; i++)
+        {
+            activeTargets[i].SetIndexInManager(i);
+        }
     }
 
     public int GetScore() { return score; }

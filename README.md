@@ -3,6 +3,8 @@
 A simple VR archery target-shooter. Targets appear one-after-another, disappearing if too many accumulate without being shot down. Accuracy (hits per shot) and clear rate (how many targets hit in time) are both graded.
 
 ## Overview
+![bow-and-arrow-ex](https://github.com/user-attachments/assets/f2dd3ece-8463-400d-8021-3301f1b6dbc5)
+
 This project builds off of a VR Lab Workshop using the **Unity XR Interaction Toolkit**.
 
 Here's a list of what's been added from the original Bow and Arrow Reference (at https://github.com/VietDN7/BowAndArrowReference):

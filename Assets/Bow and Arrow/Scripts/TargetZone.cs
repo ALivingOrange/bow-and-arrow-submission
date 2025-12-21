@@ -13,7 +13,6 @@ public class TargetZone : MonoBehaviour, ITargetManager
     [Header("Settings")]
     public float targetFrequency; // How often targets should spawn
     public int maxTargets; // When there are this many targets active, no more will be spawned
-    public float gameTime = 60.0f; // How long the game lasts
 
 
     private List<ITarget> activeTargets = new List<ITarget>();
@@ -31,7 +30,7 @@ public class TargetZone : MonoBehaviour, ITargetManager
 
     }
 
-    public void StartGame()
+    public void StartGame(int gameTime)
     {
         if (gameActive)
         {
@@ -39,11 +38,11 @@ public class TargetZone : MonoBehaviour, ITargetManager
             return;
         }
         activeTargets.Clear();
-        StartCoroutine(TargetSpawnLoop());
-        Invoke("EndGame",  gameTime);
+        StartCoroutine(TargetSpawnLoop(gameTime));
+        Invoke("EndGame", gameTime);
     }
 
-    IEnumerator TargetSpawnLoop()
+    IEnumerator TargetSpawnLoop(int gameTime)
     {
         for(int i = (int)(gameTime/targetFrequency); i > 0; i--) // As many runs as fits in the game time
         {
